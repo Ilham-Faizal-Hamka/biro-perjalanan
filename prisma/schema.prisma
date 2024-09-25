@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  username  String  @id @db.VarChar(100)
+  name      String      @db.VarChar(100)
+  email     String      @db.VarChar(100)
+  password  String      @db.VarChar(100)
+  token     String?     @db.VarChar(100)
+
+  @@map("users")
+}
+
+model Tourist {
+  id        String    @id             @db.VarChar(8)
+  name      String                    @db.VarChar(100)
+  email     String                    @db.VarChar(100)
+  nik       String                    @db.VarChar(100)
+  createdBy String                    @db.VarChar(100)
+  updatedBy String?                   @db.VarChar(100)
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @updatedAt      @db.Timestamp(6)
+  books     Booking[]
+
+  @@map("tourists")
+}
+
+model Trip {
+  id          String    @id             @db.VarChar(8)
+  destination String                    @db.VarChar(100)
+  hotel       String                    @db.VarChar(100)
+  transport   String                    @db.VarChar(100)
+  startDate   DateTime                  @db.Timestamp(6)
+  endDate     DateTime                  @db.Timestamp(6)
+  createdBy   String                    @db.VarChar(100)
+  updatedBy   String?                   @db.VarChar(100)
+  createdAt   DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime  @updatedAt      @db.Timestamp(6)
+  bookedBy    Booking[]
+
+  @@map("trips")
+}
+
+model Booking {
+  touristId String  @db.VarChar(8)
+  tripId    String  @db.VarChar(8)
+  tourist   Tourist @relation(fields: [touristId], references: [id], map:"tourist_to_booking_fk")
+  trip      Trip    @relation(fields: [tripId], references: [id], map:"trip_to_booking_fk")
+
+  @@map("bookings")
+  @@unique([touristId, tripId])
+}
