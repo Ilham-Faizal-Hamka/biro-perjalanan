@@ -1,5 +1,5 @@
 import { HttpException, Inject, Injectable } from "@nestjs/common";
-import { RegisterUserRequest, LoginUserRequest, UserResponse } from "../model/user.model";
+import { RegisterUserRequest, LoginUserRequest, UserResponse, UpdateUserRequest } from "../model/user.model";
 import { ValidationService } from "../common/validation.service";
 import { Logger } from "winston";
 import { WINSTON_MODULE_PROVIDER } from "nest-winston";
@@ -7,6 +7,7 @@ import { PrismaService } from "../common/prisma.service";
 import { UserValidation } from "./user.validation";
 import * as bcrypt from "bcrypt";
 import { v4 as uuid} from "uuid";
+import { User } from "@prisma/client";
 
 @Injectable()
 export class UserService {
@@ -80,6 +81,62 @@ export class UserService {
             name: user.name,
             token: user.token,
             email: user.email,
+        }
+    }
+
+    async get(user: User): Promise<UserResponse>{
+        return{
+            username: user.username,
+            name: user.name,
+            email: user.email,
+        }
+    }
+
+    async update(user: User, request: UpdateUserRequest,) : Promise<UserResponse>{
+        this.logger.debug(`UserService.update(${JSON.stringify(request)}, ${JSON.stringify(user)})`);
+
+        const updateRequest: UpdateUserRequest = this.validationService.validate(UserValidation.UPDATE, request);
+
+        if(updateRequest.name){
+            user.name = updateRequest.name;
+        }
+
+        if(updateRequest.email){
+            user.email = updateRequest.email;
+        }
+
+        if(updateRequest.password){
+            user.password = updateRequest.password;
+        }
+
+        const result = await this.prismaService.user.update({
+            where: {
+                username: user.username,
+            },
+            data: user,
+        });
+
+        return {
+            username: result.username,
+            name: result.name,
+            email: result.email,
+        }
+    }
+
+    async logout(user: User,) : Promise<UserResponse>{
+        const result = await this.prismaService.user.update({
+            where: {
+                username: user.username,
+            },
+            data: {
+                token: null,
+            }
+        });
+
+        return {
+            username: result.username,
+            name: result.name,
+            email: result.email,
         }
     }
 }

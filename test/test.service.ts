@@ -28,7 +28,16 @@ export class TestService {
                 password: await bcrypt.hash('test', 10),
                 name: 'test',
                 email: 'test@gmail.com',
+                token: 'test',
             }
         });
+    }
+
+    async getUser(){
+        return this.prismaService.user.findUnique({
+            where: {
+                username: 'test',
+            }
+        })
     }
 }
