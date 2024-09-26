@@ -25,7 +25,7 @@ describe('UserController', () => {
     testService = app.get(TestService);
   });
 
-  describe("POST /register", () => {
+  describe("POST /admin/register", () => {
     beforeEach(async() => {
       await testService.deleteUser();
     });
@@ -36,7 +36,7 @@ describe('UserController', () => {
     
     it("should reject if request is invalid", async() => {
       const response = await request(app.getHttpServer())
-        .post("/register")
+        .post("/admin/register")
         .send({
           username: '',
           password: '',
@@ -50,7 +50,7 @@ describe('UserController', () => {
 
     it("should be able to register new user", async() => {
       const response = await request(app.getHttpServer())
-        .post("/register")
+        .post("/admin/register")
         .send({
           username: 'test',
           password: 'test',
@@ -68,7 +68,7 @@ describe('UserController', () => {
       await testService.createUser();
 
       const response = await request(app.getHttpServer())
-        .post("/register")
+        .post("/admin/register")
         .send({
           username: 'test',
           password: 'test',
@@ -81,7 +81,7 @@ describe('UserController', () => {
     });
   });
 
-  describe("POST /login", () => {
+  describe("POST /admin/login", () => {
     beforeEach(async() => {
       await testService.deleteAll();
       await testService.createUser();
@@ -93,7 +93,7 @@ describe('UserController', () => {
 
     it('should be rejected if request is invalid', async () => {
       const response = await request(app.getHttpServer())
-        .post('/login')
+        .post('/admin/login')
         .send({
           username: '',
           password: '',
@@ -107,7 +107,7 @@ describe('UserController', () => {
 
     it("should can login if request is valid", async() => {
       const response = await request(app.getHttpServer())
-        .post("/login")
+        .post("/admin/login")
         .send({
           username: 'test',
           password: 'test',
@@ -124,7 +124,7 @@ describe('UserController', () => {
 
     it("should reject if username or password doesn't match", async() => {
       const response = await request(app.getHttpServer())
-        .post("/login")
+        .post("/admin/login")
         .send({
           username: 'test',
           password: 'test1',
@@ -137,7 +137,7 @@ describe('UserController', () => {
     });
   });
 
-  describe("GET /account", () => {
+  describe("GET /admin/account", () => {
     beforeEach(async() => {
       await testService.deleteAll();
       await testService.createUser();
@@ -149,7 +149,7 @@ describe('UserController', () => {
 
     it('should be rejected if token is invalid', async () => {
       const response = await request(app.getHttpServer())
-        .get('/account')
+        .get('/admin/account')
         .set('Authorization', 'wrong-token');
 
       logger.info(response.body);
@@ -160,7 +160,7 @@ describe('UserController', () => {
 
     it("should be able to get account if token is valid", async() => {
       const response = await request(app.getHttpServer())
-        .get("/account")
+        .get("/admin/account")
         .set('Authorization', 'test');
 
         logger.info(response.body);
@@ -172,7 +172,7 @@ describe('UserController', () => {
     });
   });
 
-  describe("PATCH /account", () => {
+  describe("PATCH /admin/account", () => {
     beforeEach(async() => {
       await testService.deleteAll();
       await testService.createUser();
@@ -184,7 +184,7 @@ describe('UserController', () => {
 
     it("should can update user password", async() => {
       const response = await request(app.getHttpServer())
-        .patch("/account")
+        .patch("/admin/account")
         .set('Authorization', 'test')
         .send({
           password: 'test-update',
@@ -198,7 +198,7 @@ describe('UserController', () => {
 
     it("should can update user name", async() => {
       const response = await request(app.getHttpServer())
-        .patch("/account")
+        .patch("/admin/account")
         .set('Authorization', 'test')
         .send({
           name: 'test-update',
@@ -212,7 +212,7 @@ describe('UserController', () => {
 
     it("should can update email", async() => {
       const response = await request(app.getHttpServer())
-        .patch("/account")
+        .patch("/admin/account")
         .set('Authorization', 'test')
         .send({
           email: 'test-update@gmail.com',
@@ -226,7 +226,7 @@ describe('UserController', () => {
 
     it("should reject if user unathorized", async() => {
       const response = await request(app.getHttpServer())
-        .patch("/account")
+        .patch("/admin/account")
         .set('Authorization', 'wrong')
         .send({
           name: 'test-update',
@@ -238,7 +238,7 @@ describe('UserController', () => {
 
     it("should reject if request is invalid", async() => {
       const response = await request(app.getHttpServer())
-        .patch("/account")
+        .patch("/admin/account")
         .set('Authorization', 'test')
         .send({
           name: '',
@@ -249,7 +249,7 @@ describe('UserController', () => {
     });
   });
 
-  describe("DELETE /account" , () => {
+  describe("DELETE /admin/account" , () => {
     beforeEach(async() => {
       await testService.deleteAll();
       await testService.createUser();
@@ -261,7 +261,7 @@ describe('UserController', () => {
 
     it("should can logout user", async() => {
       const response = await request(app.getHttpServer())
-        .delete("/account")
+        .delete("/admin/account")
         .set('Authorization', 'test');
 
       expect(response.status).toBe(200);

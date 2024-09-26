@@ -24,10 +24,9 @@ model User {
 }
 
 model Tourist {
-  id        String    @id             @db.VarChar(8)
+  nik       String    @id             @db.VarChar(100)
   name      String                    @db.VarChar(100)
   email     String                    @db.VarChar(100)
-  nik       String                    @db.VarChar(100)
   createdBy String                    @db.VarChar(100)
   updatedBy String?                   @db.VarChar(100)
   createdAt DateTime  @default(now()) @db.Timestamp(6)
@@ -56,7 +55,7 @@ model Trip {
 model Booking {
   touristId String  @db.VarChar(8)
   tripId    String  @db.VarChar(8)
-  tourist   Tourist @relation(fields: [touristId], references: [id], map:"tourist_to_booking_fk")
+  tourist   Tourist @relation(fields: [touristId], references: [nik], map:"tourist_to_booking_fk")
   trip      Trip    @relation(fields: [tripId], references: [id], map:"trip_to_booking_fk")
 
   @@map("bookings")

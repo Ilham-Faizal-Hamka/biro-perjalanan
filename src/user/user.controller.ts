@@ -5,7 +5,7 @@ import { LoginUserRequest, RegisterUserRequest, UserResponse } from "../model/us
 import { Auth } from "../common/auth.decorator";
 import { User } from "@prisma/client";
 
-@Controller('/')
+@Controller('/admin')
 export class UserController {
     constructor(private userService: UserService){
     }

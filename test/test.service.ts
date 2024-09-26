@@ -8,6 +8,7 @@ export class TestService {
 
 
     async deleteAll(){
+        await this.deleteTourist();
         await this.deleteUser();
     }
 
@@ -16,6 +17,16 @@ export class TestService {
             where: {
                 username: {
                     contains: 'test'
+                }
+            }
+        });
+    }
+
+    async deleteTourist(){
+        await this.prismaService.tourist.deleteMany({
+            where: {
+                nik: {
+                    contains: '123'
                 }
             }
         });
@@ -32,6 +43,18 @@ export class TestService {
             }
         });
     }
+
+    async createTourist(){
+        await this.prismaService.tourist.create({
+            data: {
+                nik: '1234567890',
+                name: 'test',
+                email: 'test@gmail.com',
+                createdBy: 'test',
+            }
+        });
+    }
+    
 
     async getUser(){
         return this.prismaService.user.findUnique({
