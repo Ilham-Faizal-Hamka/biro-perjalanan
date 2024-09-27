@@ -25,7 +25,7 @@ describe('TouristController', () => {
     testService = app.get(TestService);
   });
 
-  describe("POST /tourist/create", () => {
+  describe("POST /admin/tourist/create", () => {
     beforeEach(async() => {
       await testService.deleteTourist();
       await testService.deleteUser();
@@ -39,7 +39,7 @@ describe('TouristController', () => {
     
     it("should reject if request is invalid", async() => {
       const response = await request(app.getHttpServer())
-        .post("/tourist/create")
+        .post("/admin/tourist/create")
         .set('Authorization', 'test')
         .send({
           nik: '',
@@ -53,7 +53,7 @@ describe('TouristController', () => {
 
     it("should be able to create new tourist", async() => {
       const response = await request(app.getHttpServer())
-        .post("/tourist/create")
+        .post("/admin/tourist/create")
         .set('Authorization', 'test')
         .send({
           nik: '12345676474574754',
@@ -71,7 +71,7 @@ describe('TouristController', () => {
       await testService.createTourist();
 
       const response = await request(app.getHttpServer())
-        .post("/tourist/create")
+        .post("/admin/tourist/create")
         .set('Authorization', 'test')
         .send({
           nik: '1234567890',
@@ -84,7 +84,7 @@ describe('TouristController', () => {
     });
   });
 
-  describe("GET /tourist/:touristId", () => {
+  describe("GET /admin/tourist/:touristId", () => {
     beforeEach(async() => {
       await testService.deleteAll();
 
@@ -99,7 +99,7 @@ describe('TouristController', () => {
       const tourist = await testService.getTourist();
 
       const response = await request(app.getHttpServer())
-        .get(`/tourist/${tourist.id}`)
+        .get(`/admin/tourist/${tourist.id}`)
         .set('Authorization', 'test');
 
       expect(response.status).toBe(200);
@@ -111,7 +111,7 @@ describe('TouristController', () => {
 
     it("should reject if tourist id is invalid", async() => {
       const response = await request(app.getHttpServer())
-        .get(`/tourist/123`)
+        .get(`/admin/tourist/123`)
         .set('Authorization', 'test');
 
       expect(response.status).toBe(404);
@@ -119,7 +119,7 @@ describe('TouristController', () => {
     });
   });
 
-  describe("PUT /tourist/:touristId", () => {
+  describe("PUT /admin/tourist/:touristId", () => {
     beforeEach(async() => {
       await testService.deleteAll();
 
@@ -135,7 +135,7 @@ describe('TouristController', () => {
       const tourist = await testService.getTourist();
 
       const response = await request(app.getHttpServer())
-        .put(`/tourist/${tourist.id}`)
+        .put(`/admin/tourist/${tourist.id}`)
         .set('Authorization', 'test')
         .send({
           id: tourist.id,
@@ -154,7 +154,7 @@ describe('TouristController', () => {
       const tourist = await testService.getTourist();
 
       const response = await request(app.getHttpServer())
-        .put(`/tourist/${tourist.id}`)
+        .put(`/admin/tourist/${tourist.id}`)
         .set('Authorization', 'wrong')
         .send({
           id: tourist.id,
@@ -170,7 +170,7 @@ describe('TouristController', () => {
       const tourist = await testService.getTourist();
 
       const response = await request(app.getHttpServer())
-        .put(`/tourist/${tourist.id}`)
+        .put(`/admin/tourist/${tourist.id}`)
         .set('Authorization', 'test')
         .send({
           id: tourist.id,
@@ -183,7 +183,7 @@ describe('TouristController', () => {
     });
   });
 
-  describe("DELETE /tourist/:touristId", () => {
+  describe("DELETE /admin/tourist/:touristId", () => {
     beforeEach(async() => {
       await testService.deleteAll();
 
@@ -199,7 +199,7 @@ describe('TouristController', () => {
       const tourist = await testService.getTourist();
 
       const response = await request(app.getHttpServer())
-        .delete(`/tourist/${tourist.id}`)
+        .delete(`/admin/tourist/${tourist.id}`)
         .set('Authorization', 'test');
 
       expect(response.status).toBe(200);
@@ -208,7 +208,7 @@ describe('TouristController', () => {
 
     it("should reject if id is invalid", async() => {
       const response = await request(app.getHttpServer())
-        .delete(`/tourist/123`)
+        .delete(`/admin/tourist/123`)
         .set('Authorization', 'test');
 
       expect(response.status).toBe(404);
@@ -219,7 +219,7 @@ describe('TouristController', () => {
       const tourist = await testService.getTourist();
 
       const response = await request(app.getHttpServer())
-        .delete(`/tourist/${tourist.id}`)
+        .delete(`/admin/tourist/${tourist.id}`)
         .set('Authorization', 'wrong')
 
       expect(response.status).toBe(401);

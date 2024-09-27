@@ -5,7 +5,7 @@ import { User } from "@prisma/client";
 import { CreateTouristRequest, TouristResponse, UpdateTouristRequest } from "../model/tourist.model";
 import { WebResponse } from "src/model/web.model";
 
-@Controller('/tourist')
+@Controller('/admin/tourist')
 export class TouristController{
     constructor(private touristService: TouristService){}
 

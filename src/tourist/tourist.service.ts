@@ -5,6 +5,7 @@ import { ValidationService } from "../common/validation.service";
 import { PrismaService } from "../common/prisma.service";
 import { User, Tourist } from "@prisma/client";
 import { CreateTouristRequest, TouristResponse, UpdateTouristRequest } from "../model/tourist.model";
+import { TouristValidation } from "./tourist.validation";
 
 
 @Injectable()
@@ -114,4 +115,3 @@ export class TouristService{
         return tourists.map(tourist => this.toTouristResponse(tourist));
     }
 }
-import { TouristValidation } from "./tourist.validation";

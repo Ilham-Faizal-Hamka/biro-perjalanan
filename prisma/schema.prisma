@@ -55,6 +55,7 @@ model Trip {
 }
 
 model Booking {
+  id        Int     @id             @default(autoincrement())
   touristId Int     @db.Int
   tripId    Int     @db.Int
   tourist   Tourist @relation(fields: [touristId], references: [id], map:"tourist_to_booking_fk")

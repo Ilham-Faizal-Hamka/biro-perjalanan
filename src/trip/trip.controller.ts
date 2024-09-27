@@ -5,7 +5,7 @@ import { User } from "@prisma/client";
 import { CreateTripRequest, TripResponse, UpdateTripRequest } from "../model/trip.model";
 import { WebResponse } from "../model/web.model";
 
-@Controller('/trip')
+@Controller('/admin/trip')
 export class TripController{
     constructor(private tripService: TripService){}
 
