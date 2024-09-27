@@ -63,4 +63,12 @@ export class TestService {
             }
         })
     }
+
+    async getTourist(){
+        return this.prismaService.tourist.findUnique({
+            where : {
+                nik: '1234567890',
+            }
+        })
+    }
 }

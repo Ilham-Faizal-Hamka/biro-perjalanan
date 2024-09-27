@@ -83,5 +83,147 @@ describe('TouristController', () => {
         expect(response.body.errors).toBeDefined();
     });
   });
-  
+
+  describe("GET /tourist/:touristId", () => {
+    beforeEach(async() => {
+      await testService.deleteAll();
+
+      await testService.createUser();
+      await testService.createTourist();
+    });
+
+    afterEach(async() => {
+      await testService.deleteAll();
+    })
+    it("should return tourist data if tourist id is valid", async() => {
+      const tourist = await testService.getTourist();
+
+      const response = await request(app.getHttpServer())
+        .get(`/tourist/${tourist.id}`)
+        .set('Authorization', 'test');
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.id).toBe(tourist.id);
+      expect(response.body.data.nik).toBe(tourist.nik);
+      expect(response.body.data.name).toBe(tourist.name);
+      expect(response.body.data.email).toBe(tourist.email);
+    });
+
+    it("should reject if tourist id is invalid", async() => {
+      const response = await request(app.getHttpServer())
+        .get(`/tourist/123`)
+        .set('Authorization', 'test');
+
+      expect(response.status).toBe(404);
+      expect(response.body.errors).toBeDefined();
+    });
+  });
+
+  describe("PUT /tourist/:touristId", () => {
+    beforeEach(async() => {
+      await testService.deleteAll();
+
+      await testService.createUser();
+      await testService.createTourist();
+    });
+
+    afterEach(async() => {
+      await testService.deleteAll();
+    });
+
+    it("should can update tourist data", async() => {
+      const tourist = await testService.getTourist();
+
+      const response = await request(app.getHttpServer())
+        .put(`/tourist/${tourist.id}`)
+        .set('Authorization', 'test')
+        .send({
+          id: tourist.id,
+          name: 'test-new',
+          email: 'test-new@gmail.com',
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.id).toBe(tourist.id);
+      expect(response.body.data.nik).toBe('1234567890');
+      expect(response.body.data.name).toBe('test-new');
+      expect(response.body.data.email).toBe('test-new@gmail.com');
+    });
+
+    it("should reject if user is unauthorized", async() => {
+      const tourist = await testService.getTourist();
+
+      const response = await request(app.getHttpServer())
+        .put(`/tourist/${tourist.id}`)
+        .set('Authorization', 'wrong')
+        .send({
+          id: tourist.id,
+          name: 'test-new',
+          email: 'test-new@gmail.com',
+        });
+      
+      expect(response.status).toBe(401);
+      expect(response.body.errors).toBeDefined();
+    });
+
+    it("should reject if input is invalid", async() => {
+      const tourist = await testService.getTourist();
+
+      const response = await request(app.getHttpServer())
+        .put(`/tourist/${tourist.id}`)
+        .set('Authorization', 'test')
+        .send({
+          id: tourist.id,
+          name: 123,
+          email: 'test',
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toBeDefined();
+    });
+  });
+
+  describe("DELETE /tourist/:touristId", () => {
+    beforeEach(async() => {
+      await testService.deleteAll();
+
+      await testService.createUser();
+      await testService.createTourist();
+    });
+
+    afterEach(async() => {
+      await testService.deleteAll();
+    });
+
+    it("should can delete Tourist", async() => {
+      const tourist = await testService.getTourist();
+
+      const response = await request(app.getHttpServer())
+        .delete(`/tourist/${tourist.id}`)
+        .set('Authorization', 'test');
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.id).toBe(tourist.id);
+    });
+
+    it("should reject if id is invalid", async() => {
+      const response = await request(app.getHttpServer())
+        .delete(`/tourist/123`)
+        .set('Authorization', 'test');
+
+      expect(response.status).toBe(404);
+      expect(response.body.errors).toBeDefined();
+    });
+
+    it("should reject if user is unauthorized", async() => {
+      const tourist = await testService.getTourist();
+
+      const response = await request(app.getHttpServer())
+        .delete(`/tourist/${tourist.id}`)
+        .set('Authorization', 'wrong')
+
+      expect(response.status).toBe(401);
+      expect(response.body.errors).toBeDefined();
+    });
+  });
 });

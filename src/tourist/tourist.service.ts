@@ -3,8 +3,8 @@ import { Logger } from "winston";
 import { WINSTON_MODULE_PROVIDER } from "nest-winston";
 import { ValidationService } from "../common/validation.service";
 import { PrismaService } from "../common/prisma.service";
-import { User } from "@prisma/client";
-import { CreateTouristRequest, TouristResponse } from "../model/tourist.model";
+import { User, Tourist } from "@prisma/client";
+import { CreateTouristRequest, TouristResponse, UpdateTouristRequest } from "../model/tourist.model";
 
 
 @Injectable()
@@ -14,6 +14,33 @@ export class TouristService{
         @Inject(WINSTON_MODULE_PROVIDER) private logger:Logger,
         private prismaService: PrismaService
     ){}
+
+    toTouristResponse(tourist: Tourist): TouristResponse{
+        return {
+            id: tourist.id,
+            nik: tourist.nik,
+            name: tourist.name,
+            email: tourist.email,
+            createdAt: tourist.createdAt,
+            updatedAt: tourist.updatedAt,
+            createdBy: tourist.createdBy,
+            updatedBy: tourist.updatedBy,
+        }
+    }
+
+    async checkTouristExistence(id: number): Promise<Tourist>{
+        const tourist = await this.prismaService.tourist.findFirst({
+            where: {
+                id: id,
+            }
+        });
+
+        if(!tourist){
+            throw new HttpException('Tourist not found', 404);
+        }
+
+        return tourist;
+    }
 
     async create(user: User, request: CreateTouristRequest,) : Promise<TouristResponse>{
         this.logger.debug(`TouristService.create(${JSON.stringify(user)}, ${JSON.stringify(request)})`)
@@ -32,22 +59,59 @@ export class TouristService{
 
         
 
-        const result = await this.prismaService.tourist.create({
+        const tourist = await this.prismaService.tourist.create({
             data: {
                 ...createRequest,
                 ...{createdBy: user.username}
                 },
         });
         
-        return{
-            nik: result.nik,
-            name: result.name,
-            email: result.email,
-            createdAt: result.createdAt,
-            updatedAt: result.updatedAt,
-            createdBy: result.createdBy,
-            updatedBy: result.updatedBy,
-        }
+        return this.toTouristResponse(tourist);
+    }
+
+
+    //get spesific tourist data
+    async get(touristId: number) : Promise<TouristResponse>{
+        this.logger.debug(`TouristService.get(${JSON.stringify(touristId)})`)
+        const touristData = await this.checkTouristExistence(touristId);
+        return this.toTouristResponse(touristData);
+    }
+
+    async update(user: User, request: UpdateTouristRequest) : Promise<TouristResponse>{
+        this.logger.debug(`TouristService.update(${JSON.stringify(user)}, ${JSON.stringify(request)})`)
+        const updateRequest: UpdateTouristRequest = this.validationService.validate(TouristValidation.UPDATE, request);
+
+        let tourist = await this.checkTouristExistence(updateRequest.id);
+
+        tourist = await this.prismaService.tourist.update({
+            where: {
+                id: updateRequest.id,
+            },
+            data: {
+                ...updateRequest,
+                ...{updatedBy: user.username}
+            }
+        });
+
+        return this.toTouristResponse(tourist);
+    }
+
+    async remove(touristId: number): Promise<TouristResponse>{
+        this.logger.debug(`TouristService.remove(${touristId})`)
+        const tourist = await this.checkTouristExistence(touristId);
+        await this.prismaService.tourist.delete({
+            where: {
+                id: tourist.id,
+            }
+        });
+
+        return this.toTouristResponse(tourist);
+    }
+
+    async list(): Promise<TouristResponse[]>{
+        this.logger.debug(`TouristService.list()`)
+        const tourists = await this.prismaService.tourist.findMany();
+        return tourists.map(tourist => this.toTouristResponse(tourist));
     }
 }
 import { TouristValidation } from "./tourist.validation";

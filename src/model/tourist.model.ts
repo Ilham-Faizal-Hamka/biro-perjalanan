@@ -5,6 +5,7 @@ export class CreateTouristRequest{
 }
 
 export class TouristResponse{
+    id: number;
     nik: string;
     name: string;
     email: string;
@@ -12,6 +13,12 @@ export class TouristResponse{
     updatedAt?: Date;
     createdBy?: string;
     updatedBy?: string;
+}
+
+export class UpdateTouristRequest{
+    id: number;
+    name: string;
+    email: string;
 }
 
 
