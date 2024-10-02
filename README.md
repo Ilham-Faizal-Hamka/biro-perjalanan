@@ -1,7 +1,3 @@
-Here's a template you can use for your GitHub repository's README file, detailing the usage of your travel agency admin application built with NestJS, Prisma ORM, and MySQL, along with unit testing using Jest:
-
----
-
 # Travel Agency Admin Application
 
 This repository contains the source code for a **Travel Agency Admin Application** built using the **NestJS** framework. The application leverages **Prisma ORM** to interact with a **MySQL** database, and it is designed for managing employees, tourists, and trips in a travel agency. Additionally, unit tests are implemented using **Jest** to ensure code quality.
